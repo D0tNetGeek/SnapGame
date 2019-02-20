@@ -10,74 +10,15 @@ namespace SnapGameUnitTest
         [TestMethod]
         public void TestCardCreation()
         {
-            Card card = new Card(Rank.King, Suit.Hearts);
+            Card card = new Card(Rank.King.ToString(), Suit.Hearts.ToString());
 
-            card.TurnOver();
+            Assert.AreEqual(Rank.King.ToString(), card.Suit);
+            Assert.AreEqual(Suit.Hearts.ToString(), card.Rank);
 
-            Assert.AreEqual(Rank.King, card.Rank);
-            Assert.AreEqual(Suit.Hearts, card.Suit);
+            card = new Card(Rank.Two.ToString(), Suit.Diamonds.ToString());
 
-            card = new Card(Rank.Two, Suit.Diamonds);
-            card.TurnOver();
-
-            Assert.AreEqual(Rank.Two, card.Rank);
-            Assert.AreEqual(Suit.Diamonds, card.Suit);
-        }
-
-        [TestMethod]
-        public void TestCardIndex()
-        {
-            Card card = new Card(Rank.Ace, Suit.Spades);
-            
-            Assert.AreEqual(52, card.CardIndex);
-
-            card.TurnOver();
-            
-            Assert.AreEqual(0, card.CardIndex);
-
-            card  = new Card(Rank.King, Suit.Clubs);
-
-            Assert.AreEqual(52, card.CardIndex);
-
-            card.TurnOver();
-
-            Assert.AreEqual(51, card.CardIndex);
-        }
-
-        [TestMethod]
-        public void TestCardToString()
-        {
-            Card c = new Card(Rank.Ace, Suit.Spades);
-            c.TurnOver();
-            Assert.AreEqual("AS", c.ToString());
-
-            c = new Card(Rank.Ten, Suit.Clubs);
-            c.TurnOver();
-            Assert.AreEqual("TC", c.ToString());
-
-            c = new Card(Rank.Three, Suit.Diamonds);
-            c.TurnOver();
-            Assert.AreEqual("3D", c.ToString());
-
-            c = new Card(Rank.Jack, Suit.Hearts);
-            c.TurnOver();
-            Assert.AreEqual("JH", c.ToString());
-        }
-
-        [TestMethod]
-        public void TestCardTurnOver()
-        {
-            Card c = new Card(Rank.Ace, Suit.Diamonds);
-            Assert.AreEqual("**", c.ToString());
-            c.TurnOver();
-            Assert.AreEqual("AD", c.ToString());
-            c.TurnOver();
-            Assert.AreEqual("**", c.ToString());
-
-            c = new Card(Rank.Four, Suit.Hearts);
-            Assert.AreEqual("**", c.ToString());
-            c.TurnOver();
-            Assert.AreEqual("4H", c.ToString());
+            Assert.AreEqual(Rank.Two.ToString(), card.Suit);
+            Assert.AreEqual(Suit.Diamonds.ToString(), card.Rank);
         }
     }
 }

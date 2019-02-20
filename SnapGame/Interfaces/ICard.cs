@@ -4,7 +4,7 @@ namespace SnapGame.Interfaces
 {
     public interface ICard
     {
-        Card RandomCard();
-        void TurnOver();
+        bool Matches(Card card);
+        Card GetCard();
     }
 }

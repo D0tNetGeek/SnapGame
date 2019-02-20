@@ -50,8 +50,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CardUnitTests.cs" />
-    <Compile Include="DeckTests.cs" />
-    <Compile Include="SnapTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

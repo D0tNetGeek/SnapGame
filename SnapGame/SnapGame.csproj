@@ -42,14 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Deck.cs" />
-    <Compile Include="Entities\Snap.cs" />
-    <Compile Include="Interfaces\IDeck.cs" />
+    <Compile Include="Entities\Game.cs" />
+    <Compile Include="Entities\Player.cs" />
     <Compile Include="Enums\Rank.cs" />
     <Compile Include="Enums\Suit.cs" />
     <Compile Include="Interfaces\ICard.cs" />
     <Compile Include="Entities\Card.cs" />
-    <Compile Include="Interfaces\ISnap.cs" />
+    <Compile Include="Interfaces\IGame.cs" />
+    <Compile Include="Interfaces\IPlayer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
