@@ -42,19 +42,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\CardSpreader.cs" />
+    <Compile Include="Entities\DeckGenerator.cs" />
+    <Compile Include="Entities\DeckInitializer.cs" />
+    <Compile Include="Entities\DeckShuffler.cs" />
     <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\Player.cs" />
+    <Compile Include="Entities\Randomizer.cs" />
+    <Compile Include="Interfaces\ICardSpreader.cs" />
+    <Compile Include="Interfaces\IDeckInitializer.cs" />
     <Compile Include="Enums\Rank.cs" />
     <Compile Include="Enums\Suit.cs" />
     <Compile Include="Interfaces\ICard.cs" />
     <Compile Include="Entities\Card.cs" />
+    <Compile Include="Interfaces\IDeckGenerator.cs" />
+    <Compile Include="Interfaces\IDeckShuffler.cs" />
     <Compile Include="Interfaces\IGame.cs" />
+    <Compile Include="Interfaces\IInputOutputService.cs" />
     <Compile Include="Interfaces\IPlayer.cs" />
+    <Compile Include="Interfaces\IRandomizer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="Entities\ConsoleService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using System.Linq;
 using SnapGame.Enums;
 using SnapGame.Interfaces;
@@ -8,135 +9,120 @@ namespace SnapGame.Entities
 {
     public class Game : IGame
     {
-        protected List<Player> _players;
-        protected List<Card> _deck;
-        protected Card _topCard;
+        private readonly IInputOutputService _inputOutputService;
+        private readonly List<IPlayer> _players;
+        private readonly List<Card> _deck;
+        private readonly List<Card> _cardsOnCenterOfTable = new List<Card>();
 
-        private Random randNum = new Random();
+        private bool _gameEnded;
 
-        public Game(List<string> names)
+        public Game(IInputOutputService inputOutputService,
+                    IDeckInitializer deckInitializer,
+                    ICardSpreader cardSpreader,
+                    string[] playerNames)
         {
-            Console.WriteLine("Starting game with " + String.Join(", ", names.ToArray())+ "\n\n");
+            _inputOutputService = inputOutputService;
+            _gameEnded = false;
+            _players = new List<IPlayer>();
 
-            _players = new List<Player>();
-
-            foreach (var name in names)
+            foreach (var name in playerNames)
             {
-                _players.Add(new Player(name));
-            }
-        }
-
-        public void Initialize()
-        {
-            _deck = new List<Card>();
-
-            foreach (Suit suit in (Suit[]) Enum.GetValues(typeof(Suit)))
-            {
-                foreach (Rank rank in (Rank[])Enum.GetValues(typeof(Rank)))
-                {
-                   _deck.Add(new Card(suit.ToString(), rank.ToString()));
-                }
+                _players.Add(new Player(_inputOutputService, name));
             }
 
-            Shuffle();
-            Deal();
+            Console.WriteLine($"\nThe Players are: {(string.Join(", ", playerNames))}\n");
 
-            _topCard = _deck.LastOrDefault();
-
-            Console.WriteLine("Top card is : " + _topCard.GetCardName + "\n\n");
+            _deck = deckInitializer.Initialize();
+            cardSpreader.SpreadCardToPlayer(_deck, _players);
         }
 
         /// <summary>
-        /// Shuffle pack of cards
-        /// </summary>
-        public void Shuffle()
-        {
-            Console.WriteLine("Shuffling Deck...\n\n");
-
-            int deckLength = _deck.Count;
-
-            while(deckLength > 0 )
-            {
-                int i = randNum.Next(deckLength);
-                var temp = _deck[deckLength-1];
-
-                _deck[deckLength-1] = _deck[i];
-                _deck[i] = temp;
-
-                deckLength--;
-            }
-        }
-
-        /// <summary>
-        /// Deal each player seven cards
-        /// </summary>
-        public void Deal()
-        {
-            foreach (var player in _players)
-            {
-                int numCards = _deck.Count / _players.Count;
-
-                while(numCards-- > 0)
-                {
-                    player.Hand.Add(_deck[randNum.Next(_deck.Count)]);
-                }
-
-                player.RenderHand();
-            }
-        }
-
-        /// <summary>
-        /// Run the game until we have winner
+        /// Starts the game.
         /// </summary>
         public void Run()
         {
-            int deckLength = _deck.Count;
-
-            while (deckLength > 0)
+            while (!IsFinished())
             {
-                int numPlayers = _players.Count;
+                var playersWithoutCards = new List<IPlayer>();
+                List<Card> temp = new List<Card>();
 
-                for (int i = 0; i < numPlayers; i++)
+                foreach (var player in _players)
                 {
-                    var player = _players[i];
-                    var match = player.TakeTurnAndMatch(_topCard);
-
-                    if (match != null)
+                    if (_players.Count > 1)
                     {
-                        if (player.HasWon())
+                        _inputOutputService.WriteLine(player.PlayerName + " play your card\n");
+                        _inputOutputService.ReadLine();
+                    }
+
+                    if (_deck.Count > 0)
+                    {
+                        if (_cardsOnCenterOfTable.Count > 0 && player.PlayTurn(_cardsOnCenterOfTable[_cardsOnCenterOfTable.Count - 1]))
                         {
-                            return;
+                            if (_players.Count > 1)
+                            {
+                                _inputOutputService.WriteLine("SNAP !!\n");
+
+                                player.CardsList.RemoveAt(player.CardsList.Count - 1);
+
+                                temp = new List<Card>();
+                                temp.AddRange(player.CardsList);
+
+                                player.CardsList.Clear();
+
+                                foreach (Card card in _cardsOnCenterOfTable)
+                                    player.CardsList.Add(card);
+
+                                player.CardsList.AddRange(temp);
+
+                                temp.Clear();
+
+                                _cardsOnCenterOfTable.Clear();
+                            }
+                        }
+                        else
+                        {
+                            var cardOnTop = player.CardsList.LastOrDefault();
+
+                            if (cardOnTop != null)
+                            {
+                                _cardsOnCenterOfTable.Add(new Card(cardOnTop.Rank, cardOnTop.Suit));
+                                _inputOutputService.WriteLine(player.PlayerName + " is playing " + cardOnTop.CardName + "\n");
+                                player.CardsList.Remove(cardOnTop);
+                            }
                         }
 
-                        _topCard = match;
+                        _inputOutputService.WriteLine(player.PlayerName + " has " + player.CardsList.Count + " card(s) remaining !!\n");
 
-                        Console.WriteLine(player.PlayerName + " SNAP !! \n\n");
-                    }
-                    else
-                    {
-                        var card = player.TakeCard(_deck.Last());
-
-                        if (!card && AllSkipped())
+                        if (player.CardsList.Count == 0)
                         {
-                            Console.WriteLine("No winner this time...");
-                            return;
+                            playersWithoutCards.Add(player);
+                            break;
                         }
                     }
                 }
-                deckLength--;
+
+                foreach (var playerWithoutCards in playersWithoutCards)
+                {
+                    _inputOutputService.WriteLine(playerWithoutCards.PlayerName + " has lost his cards !!" + "\n");
+                    _players.Remove(playerWithoutCards);
+                }
+
+                if (_players.Count <= 1)
+                {
+                    _inputOutputService.WriteLine(((Player)_players[0]).PlayerName + " has WON !!" + "\n");
+                    _gameEnded = true;
+                    return;
+                }
             }
         }
 
-        public bool AllSkipped()
+        /// <summary>
+        /// Is game is finished.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsFinished()
         {
-            foreach (var player in _players)
-            {
-                if (!player.Skipped)
-                {
-                    return false;
-                }            
-            }
-            return false;
+            return _gameEnded;
         }
     }
 }

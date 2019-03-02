@@ -3,9 +3,8 @@ using SnapGame.Entities;
 
 namespace SnapGame.Interfaces
 {
-    public interface IGame
+    public interface ICardSpreader
     {
-        void Run();
-        bool IsFinished();
+        void SpreadCardToPlayer(List<Card> cards, List<IPlayer> players);
     }
 }

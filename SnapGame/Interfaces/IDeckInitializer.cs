@@ -3,9 +3,8 @@ using SnapGame.Entities;
 
 namespace SnapGame.Interfaces
 {
-    public interface IGame
+    public interface IDeckInitializer
     {
-        void Run();
-        bool IsFinished();
+        List<Card> Initialize();
     }
 }

@@ -3,9 +3,8 @@ using SnapGame.Entities;
 
 namespace SnapGame.Interfaces
 {
-    public interface IGame
+    public interface IDeckGenerator
     {
-        void Run();
-        bool IsFinished();
+        List<Card> Generate();
     }
 }

@@ -8,17 +8,20 @@ namespace SnapGameUnitTest
     public class CardUnitTests
     {
         [TestMethod]
-        public void TestCardCreation()
+        public void CheckTwoCardsNamesAreEqual()
         {
-            Card card = new Card(Rank.King.ToString(), Suit.Hearts.ToString());
+            Card card = new Card(Suit.Clubs.ToString(), Rank.Ace.ToString());
 
-            Assert.AreEqual(Rank.King.ToString(), card.Suit);
-            Assert.AreEqual(Suit.Hearts.ToString(), card.Rank);
+            Assert.AreEqual(new Card(Suit.Clubs.ToString(), Rank.Ace.ToString()).CardName, card.CardName);
+        }
 
-            card = new Card(Rank.Two.ToString(), Suit.Diamonds.ToString());
+        [TestMethod]
+        public void CheckCardMatching()
+        {
+            Card card1 = new Card(Suit.Clubs.ToString(), Rank.Ace.ToString());
+            Card card2 = new Card(Suit.Diamonds.ToString(), Rank.Ace.ToString());
 
-            Assert.AreEqual(Rank.Two.ToString(), card.Suit);
-            Assert.AreEqual(Suit.Diamonds.ToString(), card.Rank);
+            Assert.IsTrue(card1.Matching(card2));
         }
     }
 }

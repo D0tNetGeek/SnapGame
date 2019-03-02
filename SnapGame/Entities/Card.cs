@@ -1,12 +1,18 @@
-﻿using System;
-using SnapGame.Interfaces;
+﻿using SnapGame.Interfaces;
 
 namespace SnapGame.Entities
 {
     public class Card : ICard
     {
-        protected string _suit;
-        protected string _rank;
+        private readonly string _suit;
+        private readonly string _rank;
+
+        public string CardName => _rank + " of " + _suit;
+
+        public string Rank => _rank;
+
+        public string Suit => _suit;
+
 
         public Card(string suit, string rank)
         {
@@ -14,22 +20,16 @@ namespace SnapGame.Entities
             _rank = rank;
         }
 
-        public string Rank => _rank;
-
-        public string Suit => _suit;
-
-        public string GetCardName => _rank + " of " + _suit;
-
-        public bool Matches(Card card)
+        /// <summary>
+        /// Returns matching card.
+        /// </summary>
+        /// <param name="card"></param>
+        /// <returns></returns>
+        public bool Matching(Card card)
         {
-            var match = _rank == card._rank; //_suit == card._suit || 
+            var match = _rank == card._rank;
 
             return match;
-        }
-
-        public Card GetCard()
-        {
-            return new Card(_suit, _rank);
         }
     }
 }
